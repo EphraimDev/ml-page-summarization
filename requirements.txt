@@ -3,3 +3,5 @@ nltk
 textwrap
 logging
 newspaper
+gensim
+wget
