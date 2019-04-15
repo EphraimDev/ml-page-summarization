@@ -61,7 +61,7 @@ def main():
         
         #auto end section
         time.sleep(0.1) 
-    print("End.")
+   # print("End.")
 
 if (__name__ == '__main__'): 
     main()
