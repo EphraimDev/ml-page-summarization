@@ -1,2 +1,5 @@
-newspaper3k==0.2.8
-nltk==3.2.5
+newspaper3k
+nltk
+textwrap
+logging
+newspaper

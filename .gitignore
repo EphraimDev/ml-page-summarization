@@ -1,0 +1,6 @@
+app
+dist
+build
+Summarize.spec
+__pycache__
+applog.log
