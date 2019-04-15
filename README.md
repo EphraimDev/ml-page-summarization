@@ -1,7 +1,7 @@
 # ml-page-summarization
 
 run:
-git clone https://github.com/believeohiozua/ml-page-summarization.git
+git clone https://github.com/EphraimDev/ml-page-summarization.git
 
 cd ml-page-summarization
 
