@@ -1,21 +1,87 @@
-# ml-page-summarization
-install python 3.6 
+# Website Summarization API
 
-run:
-git clone https://github.com/EphraimDev/ml-page-summarization.git
+This project is carried out for the purpose of building a machine learning model for summarising a website from urls;
 
-cd ml-page-summarization
+## Getting Started
 
-pip install virtualenv
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-virtualenv YourenvName
 
-source mypython/bin/activate YourenvName [for Mac OS / Linux]
+### Prerequisites
 
-workon YourenvName  [for windows]
+Python distribution
 
+```
+Anaconda
+```
+
+### Installing
+
+Install Anaconda python distribution on your system
+
+Create a virtual environment called env.
+
+```
+python -m venv app
+```
+
+Activate the virtual environment
+
+```
+LINUX/Mac: source app/bin/activate
+
+Windows: app\Scripts\activate
+```
+
+Upgrade to the latest pip
+
+```
+pip install --upgrade pip
+```
+
+Install dependencies using requirements file
+
+```
 pip install -r requirements.txt
+``` 
+**Note: Your virtual environment must always be activated before running any command**
 
-python summary.py
+## Deployment
 
-enter a valid hotel web link and  hit enter!
+Start app (Make sure to enter a valid website to an existing website)
+
+
+Example of valid commands
+
+```
+python app.py summarize --website https://www.facebook.com
+
+```
+
+
+### APIs
+
+This are command options in full:
+
+```
+A command line utility for website Summarization.
+-----------------------------------------------
+These are common commands for this app.
+
+positional arguments:
+  action            This has to be 'summarize'
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --website PATH        website of the url to be summarised
+
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Hat tip to anyone whose code was used
+* Inspiration
+* etc
