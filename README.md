@@ -10,7 +10,7 @@ pip install virtualenv
 
 virtualenv YourEnvName
 
-source mypython/bin/activate YourEnvName    ----->[for Mac OS / Linux]
+source YourEnvName/bin/activate     ----->[for Mac OS / Linux]
 
 workon YourEnvName        ------>[for windows]
 
