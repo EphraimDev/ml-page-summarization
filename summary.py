@@ -46,14 +46,17 @@ def main():
             except:
                 print('\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
                 
+                
+             #close the loop
+            if (input_str == EXIT_COMMAND):
+                print("Oops! You Have exited the program")
+                break   
+                
             #restart again
             input_str = ' '
             print("\n\n Type/Paste a valid hotel web link below or 'exit\' to close \n  {}".format(input_str))
             
-			#close the loop
-            if (input_str == EXIT_COMMAND):
-                print("Exiting serial terminal.")
-                break           
+			        
 
         
         #auto end section
