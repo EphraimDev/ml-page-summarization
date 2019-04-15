@@ -47,6 +47,7 @@ def main():
                 print('\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
                 
             #restart again
+            input_str = ' '
             print("\n\n Type/Paste a valid hotel web link below or 'exit\' to close \n  {}".format(input_str))
             
 			#close the loop
