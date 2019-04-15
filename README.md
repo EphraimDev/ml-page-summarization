@@ -8,11 +8,11 @@ cd ml-page-summarization
 
 pip install virtualenv
 
-virtualenv YourenvName
+virtualenv YourEnvName
 
-source mypython/bin/activate YourenvName [for Mac OS / Linux]
+source mypython/bin/activate YourEnvName    ----->[for Mac OS / Linux]
 
-workon YourenvName  [for windows]
+workon YourEnvName        ------>[for windows]
 
 pip install -r requirements.txt
 
