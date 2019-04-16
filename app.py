@@ -1,15 +1,24 @@
+# -*- coding: utf-8 -*-
 # load Dependancies
+
+from __future__ import absolute_import
+from __future__ import division, print_function, unicode_literals
+from sumy.parsers.html import HtmlParser
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer as Summarizer
+from sumy.nlp.stemmers import Stemmer
+from sumy.utils import get_stop_words
 import sys
 import os
-import threading
-import queue
-import time
-import nltk
 import textwrap
 import logging
 import signal
 import argparse
-from newspaper import Article
+
+
+LANGUAGE = "english"
+SENTENCES_COUNT = 2
 
 
 def parse_args(argv):
@@ -23,15 +32,10 @@ def parse_args(argv):
         'action',
         help='This action should be summarize')
     parser.add_argument(
-        '--website',
+        '--url',
         help='A link to the website url')
 
     return parser.parse_args(argv[1:])
-
-    # NLTK's punkt require to run Article Summary
-    nltk.download('punkt')
-
-# define input variable
 
 
 def main(argv=sys.argv):
@@ -42,19 +46,22 @@ def main(argv=sys.argv):
                         format='%(levelname)s:%(message)s')
     args = parse_args(argv)
     action = args.action
-    website = args.website
+    url = args.url
     if action == 'summarize':
         # guide against errors
         try:
-            article = Article(website)
-            article.download()
-            article.parse()
-            article.nlp()
-            # # print keywords
-            # print('\n keywords; \n', article.keywords)
-            # print page summary
-            print('\n summary :\n\n', article.summary,'\n\n')
-            sys.stdout.flush()
+            parser = HtmlParser.from_url(url, Tokenizer(LANGUAGE))
+            # or for plain text files
+            # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+            stemmer = Stemmer(LANGUAGE)
+
+            summarizer = Summarizer(stemmer)
+            summarizer.stop_words = get_stop_words(LANGUAGE)
+
+            for sentence in summarizer(parser.document, SENTENCES_COUNT):
+                print(sentence)
+                sys.stdout.flush()
+
         except:
             print('\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
             sys.stdout.flush()
