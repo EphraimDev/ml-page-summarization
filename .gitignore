@@ -126,3 +126,13 @@ build
 mlclassification-darwin-x64
 release-builds
 Classifi
+app
+dist
+build
+Summarize.spec
+__pycache__
+applog.log
+csv/
+beneficiary.csv
+.DS_Store
+applog.log

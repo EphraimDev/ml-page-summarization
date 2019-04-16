@@ -1,17 +1,16 @@
-# load Dependancies
-import sys
+#!/usr/bin/python
+from tempfile import NamedTemporaryFile
+from utils.summarize import summarize
+import csv
+import json
+import shutil
 import os
-import time
 import textwrap
 import logging
 import signal
 import argparse
-import numpy as np
-import pandas as pd
-import nltk
-nltk.download('punkt') # one time execution
-import re
-
+import sys
+import getopt
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
@@ -24,15 +23,69 @@ def parse_args(argv):
         'action',
         help='This action should be summarize')
     parser.add_argument(
-        '--website',
-        help='A link to the website url')
+        '--url',
+        help='A link to the website url',
+        default='no')
+    parser.add_argument(
+        '--sentence',
+        help='Argument to define number of sentence for the summary',
+        type=int,
+        default=2)
+    parser.add_argument(
+        '--language',
+        help='Argument to define language of the summary',
+        default='English')
+    parser.add_argument(
+        '--path',
+        help='path to csv file',
+        required=True,
+        default='no')
 
     return parser.parse_args(argv[1:])
 
-    # NLTK's punkt require to run Article Summary
-    nltk.download('punkt')
 
-# define input variable
+def readCsv(path):
+    print('\n\n Processing Csv file \n\n')
+    sys.stdout.flush()
+    data = []
+    with open(path, 'r') as userFile:
+        userFileReader = csv.reader(userFile)
+        for row in userFileReader:
+            data.append(row)
+    return data
+
+
+def writeCsv(data, LANGUAGE, SENTENCES_COUNT):
+    print('\n\n Updating Csv file \n\n')
+    sys.stdout.flush()
+    with open('beneficiary.csv', 'w') as newFile:
+        newFileWriter = csv.writer(newFile)
+        length = len(data)
+        position = data[0].index('website')
+        for i in range(1, length):
+            if i is 1:
+                _data = data[0]
+                _data.append("summary")
+                newFileWriter.writerow(_data)
+            try:
+                __data =  data[i]
+                summary = summarize((data[i][position]), LANGUAGE, SENTENCES_COUNT)
+                __data.append(summary)
+                newFileWriter.writerow(__data)
+            except:
+                print('\n\n Error Skipping line \n\n')
+                sys.stdout.flush()    
+
+
+def processCsv(path, LANGUAGE, SENTENCES_COUNT):
+    try:
+        print('\n\n Proessing Started \n\n')
+        sys.stdout.flush()
+        data = readCsv(path)
+        writeCsv(data, LANGUAGE, SENTENCES_COUNT)
+    except:
+        print('\n\n Error Skipping line \n\n')
+        sys.stdout.flush()       
 
 
 def main(argv=sys.argv):
@@ -43,34 +96,27 @@ def main(argv=sys.argv):
                         format='%(levelname)s:%(message)s')
     args = parse_args(argv)
     action = args.action
-    website = args.website
+    url = args.url
+    path = args.path
+    LANGUAGE = "english" if args.language is None else args.language
+    SENTENCES_COUNT = 2 if args.sentence is None else args.sentence
     if action == 'summarize':
         # guide against errors
         try:
-            article = Article(website)
-            article.download()
-            article.parse()
-            article.nlp()
-            # # print keywords
-            # print('\n keywords; \n', article.keywords)
-            # print page summary
-            print('\n summary :\n\n', article.summary, '\n\n')
-            sys.stdout.flush()
+            processCsv(path, LANGUAGE, SENTENCES_COUNT)
         except:
-            print('\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
+            print(
+                '\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
             sys.stdout.flush()
-    if action == 'train':
-        # default path for the folder inside google drive
-        default_path = "drive/Colab Notebooks/Model 2/"
-        # path for training text (article)
-        train_article_path = default_path + "sumdata/train/train.article.txt"
-        # path for training text output (headline)
-        train_title_path = default_path + "sumdata/train/train.title.txt"
-        # path for validation text (article)
-        valid_article_path = default_path + "sumdata/train/valid.article.filter.txt"
-        # path for validation text output(headline)
-        valid_title_path = default_path + "sumdata/train/valid.title.filter.txt"
+        print('Completed')
+        return shutil.move('beneficiary.csv',path)
+    else:
+        print(
+            '\nAction command is not supported\n for help: run python3 app.py -h'
+        )
+        sys.stdout.flush()
+        return
 
 
-if (__name__ == '__main__'):
+if __name__ == '__main__':
     main()

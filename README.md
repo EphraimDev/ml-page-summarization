@@ -54,7 +54,8 @@ Start app (Make sure to enter a valid website to an existing website)
 Example of valid commands
 
 ```
-python app.py summarize --website https://www.facebook.com
+python app.py --url https://facebook.com --sentence 1 --language english
+python app.py --url https://facebook.com 
 
 ```
 

@@ -1,7 +1,4 @@
-newspaper3k
-nltk
+sumy
 textwrap
 logging
-newspaper
-gensim
-wget
+argparse
