@@ -17,10 +17,6 @@ import signal
 import argparse
 
 
-LANGUAGE = "english"
-SENTENCES_COUNT = 2
-
-
 def parse_args(argv):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -33,7 +29,17 @@ def parse_args(argv):
         help='This action should be summarize')
     parser.add_argument(
         '--url',
-        help='A link to the website url')
+        help='A link to the website url',
+        default='no')
+    parser.add_argument(
+        '--sentence',
+        help='Argument to define number of sentence for the summary',
+        default='no',
+        type=int)
+    parser.add_argument(
+        '--language',
+        help='Argument to define language of the summary',
+        default='no')
 
     return parser.parse_args(argv[1:])
 
@@ -47,6 +53,8 @@ def main(argv=sys.argv):
     args = parse_args(argv)
     action = args.action
     url = args.url
+    LANGUAGE = "english" if args.language is None else args.language
+    SENTENCES_COUNT = 2 if args.sentence is None else args.sentence
     if action == 'summarize':
         # guide against errors
         try:
