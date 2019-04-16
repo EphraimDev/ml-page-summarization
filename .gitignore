@@ -4,3 +4,5 @@ build
 Summarize.spec
 __pycache__
 applog.log
+csv/
+beneficiary.csv

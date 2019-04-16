@@ -1,4 +1,1 @@
 sumy
-textwrap
-logging
-argparse

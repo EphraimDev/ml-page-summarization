@@ -1,21 +1,16 @@
-# -*- coding: utf-8 -*-
-# load Dependancies
-
-from __future__ import absolute_import
-from __future__ import division, print_function, unicode_literals
-from sumy.parsers.html import HtmlParser
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer as Summarizer
-from sumy.nlp.stemmers import Stemmer
-from sumy.utils import get_stop_words
-import sys
+#!/usr/bin/python
+from tempfile import NamedTemporaryFile
+from utils.summarize import summarize
+import csv
+import json
+import shutil
 import os
 import textwrap
 import logging
 import signal
 import argparse
-
+import sys
+import getopt
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
@@ -34,14 +29,57 @@ def parse_args(argv):
     parser.add_argument(
         '--sentence',
         help='Argument to define number of sentence for the summary',
-        default='no',
-        type=int)
+        type=int,
+        default=2)
     parser.add_argument(
         '--language',
         help='Argument to define language of the summary',
+        default='English')
+    parser.add_argument(
+        '--path',
+        help='path to csv file',
+        required=True,
         default='no')
 
     return parser.parse_args(argv[1:])
+
+
+def readCsv(path):
+    print('\n\n Processing Csv file \n\n')
+    sys.stdout.flush()
+    data = []
+    with open(path, 'r') as userFile:
+        userFileReader = csv.reader(userFile)
+        for row in userFileReader:
+            data.append(row)
+    return data
+
+
+def writeCsv(data, LANGUAGE, SENTENCES_COUNT):
+    print('\n\n Updating Csv file \n\n')
+    sys.stdout.flush()
+    with open('beneficiary.csv', 'w') as newFile:
+        newFileWriter = csv.writer(newFile)
+        length = len(data)
+        position = data[0].index('website')
+        for i in range(1, length):
+            if i is 1:
+                _data = data[0]
+                _data.append("summary")
+                newFileWriter.writerow(_data)
+            __data =  data[i]
+            summary = summarize((data[i][position]), LANGUAGE, SENTENCES_COUNT)
+            __data.append(summary)
+            newFileWriter.writerow(__data)
+
+
+def processCsv(path, LANGUAGE, SENTENCES_COUNT):
+    print('\n\n Proessing Started \n\n')
+    sys.stdout.flush()
+    data = readCsv(path)
+    writeCsv(data, LANGUAGE, SENTENCES_COUNT)
+    print('Completed')
+    return shutil.move('beneficiary.csv',path)
 
 
 def main(argv=sys.argv):
@@ -53,23 +91,13 @@ def main(argv=sys.argv):
     args = parse_args(argv)
     action = args.action
     url = args.url
+    path = args.path
     LANGUAGE = "english" if args.language is None else args.language
     SENTENCES_COUNT = 2 if args.sentence is None else args.sentence
     if action == 'summarize':
         # guide against errors
         try:
-            parser = HtmlParser.from_url(url, Tokenizer(LANGUAGE))
-            # or for plain text files
-            # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
-            stemmer = Stemmer(LANGUAGE)
-
-            summarizer = Summarizer(stemmer)
-            summarizer.stop_words = get_stop_words(LANGUAGE)
-
-            for sentence in summarizer(parser.document, SENTENCES_COUNT):
-                print(sentence)
-                sys.stdout.flush()
-
+            processCsv(path, LANGUAGE, SENTENCES_COUNT)
         except:
             print(
                 '\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
@@ -84,5 +112,5 @@ def main(argv=sys.argv):
         return
 
 
-if (__name__ == '__main__'):
+if __name__ == '__main__':
     main()
