@@ -115,7 +115,9 @@ def main(argv=sys.argv):
             sys.stdout.flush()
         print('Completed')
         sys.stdout.flush()
-        return shutil.move('beneficiary.csv', path)
+        if os.path.isfile('beneficiary.csv'):
+            return shutil.move('beneficiary.csv', path)
+        return
     if action == 'simple':
         # guide against errors
         try:

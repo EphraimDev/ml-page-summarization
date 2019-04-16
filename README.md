@@ -56,9 +56,8 @@ Example of valid commands
 ```
 python app.py simple --url https://facebook.com --sentence 1 --language english
 python app.py simple --url https://facebook.com 
-python3 app.py simple --url https://korapay.com
-python3 app.py bulk --path ./csv/valid_websites.csv
-
+python app.py simple --url https://korapay.com
+python app.py bulk --path ./csv/valid_websites.csv
 ```
 
 
