@@ -1,5 +1,4 @@
-newspaper3k
-nltk
+sumy
 textwrap
 logging
-newspaper
+argparse

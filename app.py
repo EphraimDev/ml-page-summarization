@@ -1,15 +1,20 @@
+# -*- coding: utf-8 -*-
 # load Dependancies
+
+from __future__ import absolute_import
+from __future__ import division, print_function, unicode_literals
+from sumy.parsers.html import HtmlParser
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer as Summarizer
+from sumy.nlp.stemmers import Stemmer
+from sumy.utils import get_stop_words
 import sys
 import os
-import time
-import nltk
 import textwrap
 import logging
 import signal
 import argparse
-from newspaper import Article
-import heapq
-import re
 
 
 def parse_args(argv):
@@ -23,16 +28,20 @@ def parse_args(argv):
         'action',
         help='This action should be summarize')
     parser.add_argument(
-        '--website',
-        help='A link to the website url')
+        '--url',
+        help='A link to the website url',
+        default='no')
+    parser.add_argument(
+        '--sentence',
+        help='Argument to define number of sentence for the summary',
+        default='no',
+        type=int)
+    parser.add_argument(
+        '--language',
+        help='Argument to define language of the summary',
+        default='no')
 
-    # NLTK's punkt require to run Article Summary
-    nltk.download('punkt')
-    nltk.download("stopwords")
     return parser.parse_args(argv[1:])
-
-
-# define input variable
 
 
 def main(argv=sys.argv):
@@ -43,66 +52,24 @@ def main(argv=sys.argv):
                         format='%(levelname)s:%(message)s')
     args = parse_args(argv)
     action = args.action
-    website = args.website
+    url = args.url
+    LANGUAGE = "english" if args.language is None else args.language
+    SENTENCES_COUNT = 2 if args.sentence is None else args.sentence
     if action == 'summarize':
         # guide against errors
         try:
-            article = Article(website)
-            article.download()
-            article.parse()
-            article.nlp()
+            parser = HtmlParser.from_url(url, Tokenizer(LANGUAGE))
+            # or for plain text files
+            # parser = PlaintextParser.from_file("document.txt", Tokenizer(LANGUAGE))
+            stemmer = Stemmer(LANGUAGE)
 
-            # Removing Square Brackets and Extra Spaces
-            article_text = re.sub(r'\[[0-9]*\]', ' ', article.text)
-            article_text = re.sub(r'\s+', ' ', article_text)
+            summarizer = Summarizer(stemmer)
+            summarizer.stop_words = get_stop_words(LANGUAGE)
 
-            # Removing special characters and digits from the text
-            formatted_article_text = re.sub('[^a-zA-Z]', ' ', article_text)
-            formatted_article_text = re.sub(
-                r'\s+', ' ', formatted_article_text)
+            for sentence in summarizer(parser.document, SENTENCES_COUNT):
+                print(sentence)
+                sys.stdout.flush()
 
-            # sentence tokenization
-            sentence_list = nltk.sent_tokenize(article.text)
-
-            # Weighted Frequency of Occurrence with ~formatted_article_text~
-            stopwords = nltk.corpus.stopwords.words('english')
-            word_frequencies = {}
-
-            for word in nltk.word_tokenize(formatted_article_text):
-                if word not in stopwords:
-                    if word not in word_frequencies.keys():
-                        word_frequencies[word] = 1
-                    else:
-                        word_frequencies[word] += 1
-
-                 # maximum frequncy of Occurrence
-            maximum_frequncy = max(word_frequencies.values())
-            for word in word_frequencies.keys():
-                word_frequencies[word] = (
-                    word_frequencies[word]/maximum_frequncy)
-
-                # Calculating Sentence Scores
-            sentence_scores = {}
-            for sent in sentence_list:
-                for word in nltk.word_tokenize(sent.lower()):
-                    if word in word_frequencies.keys():
-                        if len(sent.split(' ')) < 30:
-                            if sent not in sentence_scores.keys():
-                                sentence_scores[sent] = word_frequencies[word]
-                            else:
-                                sentence_scores[sent] += word_frequencies[word]
-
-                # Getting the Summary
-            summary_sentences = heapq.nlargest(
-                10, sentence_scores, key=sentence_scores.get)
-            summary = ' '.join(summary_sentences)
-
-            # # print keywords
-            # print('\n keywords; \n', article.keywords)
-            # print page summary
-            print('\n summary :\n', summary)
-            sys.stdout.flush()
-            return
         except:
             print(
                 '\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
