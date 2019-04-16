@@ -6,3 +6,5 @@ __pycache__
 applog.log
 csv/
 beneficiary.csv
+.DS_Store
+applog.log

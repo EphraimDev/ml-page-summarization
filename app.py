@@ -67,19 +67,25 @@ def writeCsv(data, LANGUAGE, SENTENCES_COUNT):
                 _data = data[0]
                 _data.append("summary")
                 newFileWriter.writerow(_data)
-            __data =  data[i]
-            summary = summarize((data[i][position]), LANGUAGE, SENTENCES_COUNT)
-            __data.append(summary)
-            newFileWriter.writerow(__data)
+            try:
+                __data =  data[i]
+                summary = summarize((data[i][position]), LANGUAGE, SENTENCES_COUNT)
+                __data.append(summary)
+                newFileWriter.writerow(__data)
+            except:
+                print('\n\n Error Skipping line \n\n')
+                sys.stdout.flush()    
 
 
 def processCsv(path, LANGUAGE, SENTENCES_COUNT):
-    print('\n\n Proessing Started \n\n')
-    sys.stdout.flush()
-    data = readCsv(path)
-    writeCsv(data, LANGUAGE, SENTENCES_COUNT)
-    print('Completed')
-    return shutil.move('beneficiary.csv',path)
+    try:
+        print('\n\n Proessing Started \n\n')
+        sys.stdout.flush()
+        data = readCsv(path)
+        writeCsv(data, LANGUAGE, SENTENCES_COUNT)
+    except:
+        print('\n\n Error Skipping line \n\n')
+        sys.stdout.flush()       
 
 
 def main(argv=sys.argv):
@@ -102,8 +108,8 @@ def main(argv=sys.argv):
             print(
                 '\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
             sys.stdout.flush()
-            return
-        return
+        print('Completed')
+        return shutil.move('beneficiary.csv',path)
     else:
         print(
             '\nAction command is not supported\n for help: run python3 app.py -h'
