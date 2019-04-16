@@ -54,8 +54,10 @@ Start app (Make sure to enter a valid website to an existing website)
 Example of valid commands
 
 ```
-python app.py --url https://facebook.com --sentence 1 --language english
-python app.py --url https://facebook.com 
+python app.py simple --url https://facebook.com --sentence 1 --language english
+python app.py simple --url https://facebook.com 
+python3 app.py simple --url https://korapay.com
+python3 app.py bulk --path ./csv/valid_websites.csv
 
 ```
 

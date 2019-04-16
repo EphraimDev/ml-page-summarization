@@ -12,6 +12,7 @@ import argparse
 import sys
 import getopt
 
+
 def parse_args(argv):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -24,8 +25,8 @@ def parse_args(argv):
         help='This action should be summarize')
     parser.add_argument(
         '--url',
-        help='A link to the website url',
-        default='no')
+        help='A link to the website url'
+    )
     parser.add_argument(
         '--sentence',
         help='Argument to define number of sentence for the summary',
@@ -37,9 +38,7 @@ def parse_args(argv):
         default='English')
     parser.add_argument(
         '--path',
-        help='path to csv file',
-        required=True,
-        default='no')
+        help='path to csv file')
 
     return parser.parse_args(argv[1:])
 
@@ -68,13 +67,14 @@ def writeCsv(data, LANGUAGE, SENTENCES_COUNT):
                 _data.append("summary")
                 newFileWriter.writerow(_data)
             try:
-                __data =  data[i]
-                summary = summarize((data[i][position]), LANGUAGE, SENTENCES_COUNT)
+                __data = data[i]
+                summary = summarize(
+                    (data[i][position]), LANGUAGE, SENTENCES_COUNT)
                 __data.append(summary)
                 newFileWriter.writerow(__data)
             except:
                 print('\n\n Error Skipping line \n\n')
-                sys.stdout.flush()    
+                sys.stdout.flush()
 
 
 def processCsv(path, LANGUAGE, SENTENCES_COUNT):
@@ -84,8 +84,8 @@ def processCsv(path, LANGUAGE, SENTENCES_COUNT):
         data = readCsv(path)
         writeCsv(data, LANGUAGE, SENTENCES_COUNT)
     except:
-        print('\n\n Error Skipping line \n\n')
-        sys.stdout.flush()       
+        print('\n\n Invalid file in file path \n\n')
+        sys.stdout.flush()
 
 
 def main(argv=sys.argv):
@@ -100,16 +100,32 @@ def main(argv=sys.argv):
     path = args.path
     LANGUAGE = "english" if args.language is None else args.language
     SENTENCES_COUNT = 2 if args.sentence is None else args.sentence
-    if action == 'summarize':
+    if action == 'bulk':
+        if path is None:
+            print(
+                '\n\n Invalid Entry!, please Ensure you enter a valid file path \n\n')
+            sys.stdout.flush()
+            return
         # guide against errors
         try:
             processCsv(path, LANGUAGE, SENTENCES_COUNT)
         except:
             print(
+                '\n\n Invalid Entry!, please Ensure you enter a valid file path \n\n')
+            sys.stdout.flush()
+        print('Completed')
+        sys.stdout.flush()
+        return shutil.move('beneficiary.csv', path)
+    if action == 'simple':
+        # guide against errors
+        try:
+            summary = summarize(url, LANGUAGE, SENTENCES_COUNT)
+        except:
+            print(
                 '\n\n Invalid Entry!, please Ensure you enter a valid web link \n\n')
             sys.stdout.flush()
         print('Completed')
-        return shutil.move('beneficiary.csv',path)
+        sys.stdout.flush()
     else:
         print(
             '\nAction command is not supported\n for help: run python3 app.py -h'
