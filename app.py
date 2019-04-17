@@ -47,7 +47,7 @@ def readCsv(path):
     print('\n\n Processing Csv file \n\n')
     sys.stdout.flush()
     data = []
-    with open(path, 'r') as userFile:
+    with open(path, 'r', encoding="mbcs") as userFile:
         userFileReader = csv.reader(userFile)
         for row in userFileReader:
             data.append(row)
